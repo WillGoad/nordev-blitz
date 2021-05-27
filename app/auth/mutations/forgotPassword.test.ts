@@ -42,16 +42,16 @@ describe("forgotPassword mutation", () => {
 
     const tokens = await db.token.findMany({ where: { userId: user.id } })
     const token = tokens[0]
+    if (!user.tokens[0]) throw new Error("Missing user token")
+    if (!token) throw new Error("Missing token")
 
     // delete's existing tokens
     expect(tokens.length).toBe(1)
-    if (token !== undefined && user.tokens[0] !== undefined) {
-      expect(token.id).not.toBe(user.tokens[0].id)
-      expect(token.type).toBe("RESET_PASSWORD")
-      expect(token.sentTo).toBe(user.email)
-      expect(token.hashedToken).toBe(hash256(generatedToken))
-      expect(token.expiresAt > new Date()).toBe(true)
-    }
+    expect(token.id).not.toBe(user.tokens[0].id)
+    expect(token.type).toBe("RESET_PASSWORD")
+    expect(token.sentTo).toBe(user.email)
+    expect(token.hashedToken).toBe(hash256(generatedToken))
+    expect(token.expiresAt > new Date()).toBe(true)
     expect(previewEmail).toBeCalled()
   })
 })
