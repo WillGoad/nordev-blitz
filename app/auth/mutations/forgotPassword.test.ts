@@ -45,12 +45,13 @@ describe("forgotPassword mutation", () => {
 
     // delete's existing tokens
     expect(tokens.length).toBe(1)
-
-    expect(token.id).not.toBe(user.tokens[0].id)
-    expect(token.type).toBe("RESET_PASSWORD")
-    expect(token.sentTo).toBe(user.email)
-    expect(token.hashedToken).toBe(hash256(generatedToken))
-    expect(token.expiresAt > new Date()).toBe(true)
+    if (token !== undefined && user.tokens[0] !== undefined) {
+      expect(token.id).not.toBe(user.tokens[0].id)
+      expect(token.type).toBe("RESET_PASSWORD")
+      expect(token.sentTo).toBe(user.email)
+      expect(token.hashedToken).toBe(hash256(generatedToken))
+      expect(token.expiresAt > new Date()).toBe(true)
+    }
     expect(previewEmail).toBeCalled()
   })
 })
